@@ -7,13 +7,22 @@ SITE=${SITE:-pest.localhost}
 BENCH_DIR=/home/frappe/bench/frappe-bench
 APPS_FILE=/workspace/pest_control/docker/apps.txt
 
-export PATH="$HOME/.local/bin:$PATH"
+PYTHON="$HOME/.pyenv/versions/3.12.16/bin/python3"
+CLI_DIR=/home/frappe/bench/cli
+
+# Frappe v15 needs Python < 3.13; the image's default bench CLI runs on 3.14,
+# so install bench into its own 3.12 virtualenv.
+if [ ! -x "$CLI_DIR/bin/bench" ]; then
+	"$PYTHON" -m venv "$CLI_DIR"
+	"$CLI_DIR/bin/pip" install -q frappe-bench
+fi
+export PATH="$CLI_DIR/bin:$PATH"
 source "$HOME/.nvm/nvm.sh"
-nvm use 18 >/dev/null 2>&1 || nvm use default >/dev/null
+nvm use 22 >/dev/null
 
 if [ ! -d "$BENCH_DIR" ]; then
 	cd /home/frappe/bench
-	bench init --skip-redis-config-generation --frappe-branch version-15 frappe-bench
+	bench init --skip-redis-config-generation --frappe-branch version-15 --python "$PYTHON" frappe-bench
 fi
 cd "$BENCH_DIR"
 
