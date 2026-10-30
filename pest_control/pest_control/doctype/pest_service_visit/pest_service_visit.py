@@ -12,6 +12,7 @@ GUARDED = {
 	"actual_end": None,
 	"status_reason": None,
 	"coverage_summary": None,
+	"fully_staffed": 0,
 }
 
 

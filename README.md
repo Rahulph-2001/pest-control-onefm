@@ -2,7 +2,7 @@
 
 Pest Control Management prototype on **OneFM**, Frappe, ERPNext, Frappe HR and CRM (v15): service visits, verified manpower allocation and audit controls.
 
-> **Status: working prototype.** It runs on an installed OneFM stack (Frappe v15.117.0, ERPNext, Frappe HR, CRM, OneFM `version-15`), and **all 11 mandatory acceptance cases pass**. Concurrent allocations are refused under real parallel load, 18/18 HTTP access checks pass, and optional ERPNext stock posting works (3/3 tests). The enquiry → visit → OneFM allocation → completion report journey runs end to end. See [docs/test-results.md](docs/test-results.md).
+> **Status: working prototype.** It runs on an installed OneFM stack (Frappe v15.117.0, ERPNext, Frappe HR, CRM, OneFM `version-15`), and **all 11 mandatory acceptance cases pass**. Concurrent allocations are refused under real parallel load, 18/18 HTTP access checks pass, ERPNext stock posting works (3/3 tests), and contracts/AMC, the service certificate, the dashboard, the daily manpower report and attendance sync are tested (8/8). The enquiry → visit → OneFM allocation → completion report journey runs end to end. See [docs/test-results.md](docs/test-results.md).
 
 ## What it does
 
@@ -14,6 +14,11 @@ A CRM enquiry becomes a **Pest Service Request** for a customer's OneFM site, wh
 | Roster | Each assignment creates exactly one OneFM **Employee Schedule**, linked via its `reference_doctype` / `reference_docname`. The schedule is the authoritative record. |
 | CRM | Requests link to an existing Lead / Opportunity / CRM Lead / CRM Deal |
 | Materials | Child table of ERPNext **Item**, quantity and unit (validated against the Item's UOMs). Optional posting as an ERPNext **Stock Entry (Material Issue)**, once per report |
+| Contracts / AMC | Extends OneFM **Contracts** with a contract type (AMC, One-Time, Seasonal) and a services table (site, pest, frequency). *Generate Service Requests* creates the requests for the contract period; repeating it creates nothing new. |
+| Attendance | Completing a visit marks each crew member **Present** in Frappe HR **Attendance**, using the report's actual times and linked to the assignment. Existing attendance is left alone. |
+| Service certificate | *Pest Service Certificate* print format (default) on the completion report |
+| Dashboard | **Pest Control** workspace: number cards (visits today, scheduled, in progress, understaffed, pending verifications, active contracts), charts and shortcuts |
+| Daily manpower report | *Daily Manpower Deployment*: who is deployed where on a date, including **unfilled** positions |
 
 ## Controls
 

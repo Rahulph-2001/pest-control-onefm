@@ -79,6 +79,24 @@ The losing request blocked on the Employee row lock until the winner committed. 
 
 With OneFM installed, ERPNext's own zero-stock path raises a `TypeError`, because OneFM replaces `get_valuation_rate_` with an incompatible signature. The app therefore checks availability itself first, under a row lock on Bin, and gives a clear message.
 
+## Contracts, attendance, report, certificate, dashboard
+
+`run-tests --module pest_control.tests.test_extras`: **8/8 passed.**
+
+| Check | Result |
+|---|---|
+| An AMC contract (OneFM Contracts) with monthly cockroach and quarterly termite services over Nov 2026 to Jan 2027 generates **4** Open requests (3 + 1) on the right dates | ✅ |
+| Generating again creates 0 and skips 4 (idempotent) | ✅ |
+| A contract request for the wrong customer, or a request with no CRM source and no contract, is refused | ✅ |
+| A field user can't generate contract requests | ✅ |
+| Completing a visit marks the technician and supervisor **Present** (2 h, linked to the assignment) and logs *Attendance Synced* | ✅ |
+| Existing attendance for that day is left untouched | ✅ |
+| The Daily Manpower Deployment report lists the assigned technician with their OneFM schedule, plus an **Unfilled** supervisor row; the fully-staffed flag flips when the supervisor is added | ✅ |
+| The Pest Service Certificate renders with title, customer, report number and crew, and is the default print format | ✅ |
+| The workspace, number cards, chart and report exist | ✅ |
+
+Demo journey on the live site: the completed visit marked both crew members Present for 28 Oct 2026 (1.75 h).
+
 ## Not covered by automated tests
 
 | Check | Status |

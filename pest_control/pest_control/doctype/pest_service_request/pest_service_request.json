@@ -17,6 +17,7 @@
   "crm_reference_doctype",
   "column_break_crm",
   "crm_reference_name",
+  "contract",
   "section_details",
   "description"
  ],
@@ -71,14 +72,14 @@
   {
    "fieldname": "section_crm",
    "fieldtype": "Section Break",
-   "label": "CRM Source"
+   "label": "Source (CRM enquiry or Contract)",
+   "description": "Link the CRM enquiry, or the OneFM contract this request is generated from."
   },
   {
    "fieldname": "crm_reference_doctype",
    "fieldtype": "Link",
    "label": "CRM Document Type",
-   "options": "DocType",
-   "reqd": 1
+   "options": "DocType"
   },
   {
    "fieldname": "column_break_crm",
@@ -88,8 +89,14 @@
    "fieldname": "crm_reference_name",
    "fieldtype": "Dynamic Link",
    "label": "CRM Document",
-   "options": "crm_reference_doctype",
-   "reqd": 1
+   "options": "crm_reference_doctype"
+  },
+  {
+   "fieldname": "contract",
+   "fieldtype": "Link",
+   "label": "Contract (OneFM)",
+   "options": "Contracts",
+   "in_standard_filter": 1
   },
   {
    "fieldname": "section_details",
@@ -108,7 +115,7 @@
  "is_submittable": 0,
  "istable": 0,
  "links": [],
- "modified": "2026-10-30 12:00:00.000000",
+ "modified": "2026-10-31 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Pest Control",
  "name": "Pest Service Request",

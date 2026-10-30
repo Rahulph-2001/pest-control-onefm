@@ -23,6 +23,7 @@
   "required_supervisors",
   "supervisor_operations_role",
   "coverage_summary",
+  "fully_staffed",
   "section_actual",
   "actual_start",
   "actual_end",
@@ -142,6 +143,14 @@
    "no_copy": 1
   },
   {
+   "fieldname": "fully_staffed",
+   "fieldtype": "Check",
+   "label": "Fully Staffed",
+   "read_only": 1,
+   "no_copy": 1,
+   "in_standard_filter": 1
+  },
+  {
    "fieldname": "section_actual",
    "fieldtype": "Section Break",
    "label": "Execution"
@@ -188,7 +197,7 @@
  "is_submittable": 0,
  "istable": 0,
  "links": [],
- "modified": "2026-10-30 12:00:00.000000",
+ "modified": "2026-10-31 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Pest Control",
  "name": "Pest Service Visit",

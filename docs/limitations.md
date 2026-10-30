@@ -21,6 +21,10 @@ The following are deferred:
 - AI allocation
 - production hardening
 
+**Contracts / AMC:** service requests are generated from a contract on demand (an Operations Manager clicks *Generate Service Requests*). They aren't created automatically on a schedule, because the plan defers automatic recurring visits. Billing stays in OneFM Contracts and isn't touched by this app.
+
+**Attendance sync:** if OneFM or Frappe HR refuses an Attendance (for example missing HR setup such as a holiday list), the visit still completes and the failure is recorded in the *Attendance Synced* audit event for HR to fix manually. OneFM's own `Contracts` insert also commits the transaction, so code that creates contracts must not rely on rolling them back.
+
 **ERPNext stock posting** is implemented as an optional, manual action (Operations Manager, one Material Issue per submitted report). Returns and reversals of a posted entry are done in ERPNext directly.
 
 Company or team scoping for Operations Managers relies on standard Frappe User Permissions. The prototype uses a single demo company.

@@ -113,7 +113,15 @@ def _update_coverage(visit_doc):
 	summary = _("Technicians {0}/{1}, Supervisors {2}/{3}").format(
 		techs, visit_doc.required_technicians or 0, sups, visit_doc.required_supervisors or 0
 	)
-	frappe.db.set_value("Pest Service Visit", visit_doc.name, "coverage_summary", summary, update_modified=False)
+	fully_staffed = int(
+		techs >= (visit_doc.required_technicians or 0) and sups >= (visit_doc.required_supervisors or 0)
+	)
+	frappe.db.set_value(
+		"Pest Service Visit",
+		visit_doc.name,
+		{"coverage_summary": summary, "fully_staffed": fully_staffed},
+		update_modified=False,
+	)
 	return techs, sups
 
 
@@ -435,3 +443,7 @@ def complete_visit_from_report(report):
 		actual_start=report.actual_start,
 		actual_end=report.actual_end,
 	)
+
+	from pest_control.attendance import sync_attendance
+
+	sync_attendance(visit_doc, report)

@@ -12,6 +12,10 @@ after_migrate = "pest_control.setup.install.after_migrate"
 
 app_include_js = "/assets/pest_control/js/verification_actions.js"
 
+doctype_js = {
+	"Contracts": "public/js/contracts.js",
+}
+
 # OneFM's Employee Schedule is the authoritative roster. These hooks run after
 # OneFM's own controller methods.
 doc_events = {

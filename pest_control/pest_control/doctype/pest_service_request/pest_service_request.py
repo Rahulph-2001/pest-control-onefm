@@ -10,7 +10,23 @@ class PestServiceRequest(Document):
 	def validate(self):
 		enforce_guarded_fields(self, {"status": "Open"})
 		self.validate_site_customer()
-		self.validate_crm_source()
+		if not (self.crm_reference_name or self.contract):
+			frappe.throw(_("Link the CRM enquiry or the contract this request comes from."))
+		if self.crm_reference_name or self.crm_reference_doctype:
+			self.validate_crm_source()
+		if self.contract:
+			self.validate_contract()
+
+	def validate_contract(self):
+		client = frappe.db.get_value("Contracts", self.contract, "client")
+		if client != self.customer:
+			frappe.throw(
+				_("Contract {0} belongs to customer {1}, not {2}.").format(self.contract, client, self.customer)
+			)
+		if not frappe.db.exists(
+			"Pest Contract Service", {"parent": self.contract, "parenttype": "Contracts", "operations_site": self.operations_site}
+		):
+			frappe.throw(_("Contract {0} does not cover site {1}.").format(self.contract, self.operations_site))
 
 	def validate_site_customer(self):
 		site = frappe.db.get_value(

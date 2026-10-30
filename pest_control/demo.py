@@ -24,8 +24,12 @@ def setup_demo():
 	}
 	for user in users.values():
 		_set_password(user, "Demo@12345")
+	data_contract = fx.contract(base, "2026-10-01", "2027-09-30", [
+		{"operations_site": base.site, "pest_category": "Cockroaches", "visit_frequency": "Monthly"},
+		{"operations_site": base.site, "pest_category": "Termites", "visit_frequency": "Quarterly"},
+	])
 	frappe.db.commit()
-	return {"base": base, "users": users, "workers": workers}
+	return {"base": base, "users": users, "workers": workers, "contract": data_contract}
 
 
 def _set_password(user, password):

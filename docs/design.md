@@ -14,7 +14,9 @@ OneFM reference: `ONE-F-M/one_fm` branch `version-15`. Schemas were inspected at
 | Employee | Frappe HR **Employee** | `status`, `relieving_date`, `user_id` (field-account mapping) |
 | Working period | Frappe HR **Shift Assignment** + **Shift Type** | Must be submitted and Active, and its window must cover the visit |
 | Leave | Frappe HR **Leave Application** | Submitted + Approved, any leave type |
-| Materials | ERPNext **Item**, **UOM** | Child table `Pest Material Item` |
+| Materials | ERPNext **Item**, **UOM**, **Stock Entry** | Child table `Pest Material Item`; optional Material Issue per report |
+| Contracts / AMC | OneFM **Contracts** | Custom fields `pest_contract_type` and `pest_services` (child `Pest Contract Service`: site, pest, frequency). Requests are generated on demand. |
+| Attendance | Frappe HR **Attendance** (with OneFM fields) | Present, with in/out time and working hours from the report; `reference_doctype/docname` point to the assignment |
 
 ### New DocTypes (app `pest_control`)
 

@@ -75,6 +75,13 @@ def user(email, roles):
 def base_records():
 	"""Customer, item, shift type, OneFM project/site/shift/roles."""
 	comp = company()
+	if not frappe.db.get_value("Company", comp, "default_holiday_list"):
+		holidays = ensure(
+			"Holiday List",
+			{"holiday_list_name": f"{PREFIX} Holidays"},
+			{"from_date": "2026-01-01", "to_date": "2027-12-31"},
+		).name
+		frappe.db.set_value("Company", comp, "default_holiday_list", holidays)
 	customer_defaults = {
 		"customer_type": "Company",
 		"customer_group": frappe.db.get_value("Customer Group", {"is_group": 0}),
@@ -292,3 +299,30 @@ def users():
 		field=user(f"field{PREFIX.lower()}@example.com", [FIELD_USER]),
 		field2=user(f"field2{PREFIX.lower()}@example.com", [FIELD_USER]),
 	)
+
+
+def contract(base, start, end, services, contract_type="AMC"):
+	"""A OneFM Contracts record with pest control services. OneFM's insert
+	commits, so call this from setUpClass only."""
+	name = frappe.db.get_value(
+		"Contracts",
+		{"client": base.customer, "project": base.project, "start_date": start, "pest_contract_type": ("is", "set")},
+	)
+	if name:
+		return name
+	doc = frappe.get_doc(
+		{
+			"doctype": "Contracts",
+			"client": base.customer,
+			"project": base.project,
+			"start_date": start,
+			"end_date": end,
+			"price_list": frappe.db.get_value("Price List", {"selling": 1}),
+			"poc": [{"poc": frappe.db.get_value("Contact", {"first_name": f"{PREFIX} Site Manager"}), "designation": "Facility Manager"}],
+			"pest_contract_type": contract_type,
+			"pest_services": services,
+		}
+	)
+	fill_mandatory(doc)
+	doc.insert(ignore_permissions=True)
+	return doc.name
