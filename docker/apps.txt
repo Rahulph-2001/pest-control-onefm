@@ -1,0 +1,11 @@
+# app_name  git_url  branch   (installed in this order)
+erpnext https://github.com/frappe/erpnext version-15
+hrms https://github.com/frappe/hrms version-15
+payments https://github.com/frappe/payments version-15
+telephony https://github.com/frappe/telephony develop
+helpdesk https://github.com/frappe/helpdesk main
+crm https://github.com/frappe/crm main
+wiki https://github.com/ONE-F-M/wiki version-15
+twilio_integration https://github.com/frappe/twilio-integration master
+password_management https://github.com/ONE-F-M/password_management version-15
+one_fm https://github.com/ONE-F-M/one_fm version-15

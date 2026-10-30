@@ -1,0 +1,223 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:employee",
+ "creation": "2026-10-30 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "employee",
+  "employee_name",
+  "column_break_emp",
+  "employee_user",
+  "verification_status",
+  "section_evidence",
+  "identity_document_type",
+  "identity_document_number",
+  "identity_evidence",
+  "column_break_evidence",
+  "employment_evidence",
+  "right_to_work_evidence",
+  "section_checklist",
+  "identity_checked",
+  "employment_checked",
+  "right_to_work_checked",
+  "section_authorization",
+  "authorized_technician",
+  "authorized_supervisor",
+  "section_decision",
+  "reviewed_by",
+  "decision_time",
+  "column_break_decision",
+  "decision_reason"
+ ],
+ "fields": [
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee",
+   "reqd": 1,
+   "unique": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name",
+   "read_only": 1,
+   "fetch_from": "employee.employee_name",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "column_break_emp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employee_user",
+   "fieldtype": "Link",
+   "label": "Employee User",
+   "options": "User",
+   "read_only": 1,
+   "fetch_from": "employee.user_id"
+  },
+  {
+   "fieldname": "verification_status",
+   "fieldtype": "Select",
+   "label": "Verification Status",
+   "options": "Pending\nVerified\nRejected\nRevoked",
+   "default": "Pending",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "section_evidence",
+   "fieldtype": "Section Break",
+   "label": "Identity and Employment Evidence"
+  },
+  {
+   "fieldname": "identity_document_type",
+   "fieldtype": "Select",
+   "label": "Identity Document Type",
+   "options": "\nNational ID\nPassport\nResidence Permit"
+  },
+  {
+   "fieldname": "identity_document_number",
+   "fieldtype": "Data",
+   "label": "Identity Document Number"
+  },
+  {
+   "fieldname": "identity_evidence",
+   "fieldtype": "Attach",
+   "label": "Identity Evidence (private)"
+  },
+  {
+   "fieldname": "column_break_evidence",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "employment_evidence",
+   "fieldtype": "Attach",
+   "label": "Employment Evidence (private)"
+  },
+  {
+   "fieldname": "right_to_work_evidence",
+   "fieldtype": "Attach",
+   "label": "Right-to-Work Evidence (private)"
+  },
+  {
+   "fieldname": "section_checklist",
+   "fieldtype": "Section Break",
+   "label": "Verifier Checklist",
+   "description": "Each item must be reviewed by an HR Verifier. Uploading a file alone is not verification."
+  },
+  {
+   "fieldname": "identity_checked",
+   "fieldtype": "Check",
+   "label": "Identity checked against original"
+  },
+  {
+   "fieldname": "employment_checked",
+   "fieldtype": "Check",
+   "label": "Employment record confirmed"
+  },
+  {
+   "fieldname": "right_to_work_checked",
+   "fieldtype": "Check",
+   "label": "Right to work confirmed"
+  },
+  {
+   "fieldname": "section_authorization",
+   "fieldtype": "Section Break",
+   "label": "Work Authorization"
+  },
+  {
+   "fieldname": "authorized_technician",
+   "fieldtype": "Check",
+   "label": "Authorized as Technician"
+  },
+  {
+   "fieldname": "authorized_supervisor",
+   "fieldtype": "Check",
+   "label": "Authorized as Supervisor"
+  },
+  {
+   "fieldname": "section_decision",
+   "fieldtype": "Section Break",
+   "label": "Decision",
+   "collapsible": 0
+  },
+  {
+   "fieldname": "reviewed_by",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "decision_time",
+   "fieldtype": "Datetime",
+   "label": "Decision Time",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_decision",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "decision_reason",
+   "fieldtype": "Small Text",
+   "label": "Decision Reason",
+   "read_only": 1,
+   "no_copy": 1
+  }
+ ],
+ "in_create": 0,
+ "index_web_pages_for_search": 0,
+ "is_submittable": 0,
+ "istable": 0,
+ "links": [],
+ "modified": "2026-10-30 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Pest Control",
+ "name": "Pest Employee Verification",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "report": 1,
+   "export": 0,
+   "print": 1,
+   "email": 0,
+   "share": 0,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "Pest HR Verifier",
+   "read": 1,
+   "report": 1,
+   "export": 0,
+   "print": 1,
+   "email": 0,
+   "share": 0,
+   "write": 1,
+   "create": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "employee_name,verification_status",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "employee_name",
+ "track_changes": 1
+}

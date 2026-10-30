@@ -1,0 +1,236 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:PSV-{YYYY}-{#####}",
+ "creation": "2026-10-30 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "service_request",
+  "customer",
+  "operations_site",
+  "operations_shift",
+  "column_break_main",
+  "status",
+  "scheduled_start",
+  "scheduled_end",
+  "section_staffing",
+  "required_technicians",
+  "technician_operations_role",
+  "required_qualification",
+  "column_break_staffing",
+  "required_supervisors",
+  "supervisor_operations_role",
+  "coverage_summary",
+  "section_actual",
+  "actual_start",
+  "actual_end",
+  "column_break_actual",
+  "status_reason",
+  "section_materials",
+  "planned_materials"
+ ],
+ "fields": [
+  {
+   "fieldname": "service_request",
+   "fieldtype": "Link",
+   "label": "Service Request",
+   "options": "Pest Service Request",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "read_only": 1,
+   "fetch_from": "service_request.customer",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "operations_site",
+   "fieldtype": "Link",
+   "label": "OneFM Site",
+   "options": "Operations Site",
+   "read_only": 1,
+   "fetch_from": "service_request.operations_site"
+  },
+  {
+   "fieldname": "operations_shift",
+   "fieldtype": "Link",
+   "label": "OneFM Shift",
+   "options": "Operations Shift",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nScheduled\nIn Progress\nCompleted\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "scheduled_start",
+   "fieldtype": "Datetime",
+   "label": "Scheduled Start",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "scheduled_end",
+   "fieldtype": "Datetime",
+   "label": "Scheduled End",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_staffing",
+   "fieldtype": "Section Break",
+   "label": "Staffing Requirement"
+  },
+  {
+   "fieldname": "required_technicians",
+   "fieldtype": "Int",
+   "label": "Required Technicians",
+   "default": "1",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "technician_operations_role",
+   "fieldtype": "Link",
+   "label": "Technician OneFM Role",
+   "options": "Operations Role"
+  },
+  {
+   "fieldname": "required_qualification",
+   "fieldtype": "Link",
+   "label": "Required Qualification",
+   "options": "Pest Qualification Type"
+  },
+  {
+   "fieldname": "column_break_staffing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "required_supervisors",
+   "fieldtype": "Int",
+   "label": "Required Supervisors",
+   "default": "0",
+   "non_negative": 1
+  },
+  {
+   "fieldname": "supervisor_operations_role",
+   "fieldtype": "Link",
+   "label": "Supervisor OneFM Role",
+   "options": "Operations Role"
+  },
+  {
+   "fieldname": "coverage_summary",
+   "fieldtype": "Data",
+   "label": "Coverage",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "section_actual",
+   "fieldtype": "Section Break",
+   "label": "Execution"
+  },
+  {
+   "fieldname": "actual_start",
+   "fieldtype": "Datetime",
+   "label": "Actual Start",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "actual_end",
+   "fieldtype": "Datetime",
+   "label": "Actual End",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "column_break_actual",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "status_reason",
+   "fieldtype": "Small Text",
+   "label": "Last Status Reason",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "section_materials",
+   "fieldtype": "Section Break",
+   "label": "Planned Materials"
+  },
+  {
+   "fieldname": "planned_materials",
+   "fieldtype": "Table",
+   "label": "Planned Materials",
+   "options": "Pest Material Item"
+  }
+ ],
+ "in_create": 0,
+ "index_web_pages_for_search": 0,
+ "is_submittable": 0,
+ "istable": 0,
+ "links": [],
+ "modified": "2026-10-30 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Pest Control",
+ "name": "Pest Service Visit",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "report": 1,
+   "export": 0,
+   "print": 1,
+   "email": 0,
+   "share": 0,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "Pest Operations Manager",
+   "read": 1,
+   "report": 1,
+   "export": 0,
+   "print": 1,
+   "email": 0,
+   "share": 0,
+   "write": 1,
+   "create": 1
+  },
+  {
+   "role": "Pest Field User",
+   "read": 1,
+   "report": 1,
+   "export": 0,
+   "print": 1,
+   "email": 0,
+   "share": 0
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "customer",
+ "track_changes": 1
+}
