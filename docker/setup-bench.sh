@@ -7,6 +7,9 @@ SITE=${SITE:-pest.localhost}
 BENCH_DIR=/home/frappe/bench/frappe-bench
 APPS_FILE=/workspace/pest_control/docker/apps.txt
 
+# OneFM version-15 imports frappe.workflow...workflow_action.get_email_template,
+# removed from Frappe after v15.117.0 (commit 99a7c51a, 5 Aug 2026).
+FRAPPE_REF=v15.117.0
 PYTHON="$HOME/.pyenv/versions/3.12.16/bin/python3"
 CLI_DIR=/home/frappe/bench/cli
 
@@ -22,7 +25,7 @@ nvm use 22 >/dev/null
 
 if [ ! -d "$BENCH_DIR" ]; then
 	cd /home/frappe/bench
-	bench init --skip-redis-config-generation --frappe-branch version-15 --python "$PYTHON" frappe-bench
+	bench init --skip-redis-config-generation --frappe-branch "$FRAPPE_REF" --python "$PYTHON" frappe-bench
 fi
 cd "$BENCH_DIR"
 
