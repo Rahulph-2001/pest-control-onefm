@@ -2,7 +2,7 @@
 
 Pest Control Management prototype on **OneFM**, Frappe, ERPNext, Frappe HR and CRM (v15): service visits, verified manpower allocation and audit controls.
 
-> **Status: working prototype.** It runs on an installed OneFM stack (Frappe v15.117.0, ERPNext, Frappe HR, CRM, OneFM `version-15`), and **all 11 mandatory acceptance cases pass**. The enquiry → visit → OneFM allocation → completion report journey runs end to end. See [docs/test-results.md](docs/test-results.md). Stock posting is not implemented yet.
+> **Status: working prototype.** It runs on an installed OneFM stack (Frappe v15.117.0, ERPNext, Frappe HR, CRM, OneFM `version-15`), and **all 11 mandatory acceptance cases pass**. Concurrent allocations are refused under real parallel load, 18/18 HTTP access checks pass, and optional ERPNext stock posting works (3/3 tests). The enquiry → visit → OneFM allocation → completion report journey runs end to end. See [docs/test-results.md](docs/test-results.md).
 
 ## What it does
 
@@ -13,7 +13,7 @@ A CRM enquiry becomes a **Pest Service Request** for a customer's OneFM site, wh
 | Sites | Reuses OneFM **Operations Site** (adds a Pest Control Customer field), with no second site master |
 | Roster | Each assignment creates exactly one OneFM **Employee Schedule**, linked via its `reference_doctype` / `reference_docname`. The schedule is the authoritative record. |
 | CRM | Requests link to an existing Lead / Opportunity / CRM Lead / CRM Deal |
-| Materials | Child table of ERPNext **Item**, quantity and unit (validated against the Item's UOMs) |
+| Materials | Child table of ERPNext **Item**, quantity and unit (validated against the Item's UOMs). Optional posting as an ERPNext **Stock Entry (Material Issue)**, once per report |
 
 ## Controls
 
@@ -61,7 +61,7 @@ See [docs/setup.md](docs/setup.md) for the full setup steps, demo users, and the
 
 - OneFM allows **one Basic Employee Schedule per employee per day**, so two back-to-back pest visits on the same day can't both be rostered. This needs a business decision.
 - OneFM's Desk roster page writes some changes with direct SQL, which bypasses document hooks. The visit start gate re-checks the roster to catch this.
-- Stock posting (Stock Entry for consumption) is not implemented yet; only Item links are.
+- Frappe is pinned to v15.117.0 because current OneFM doesn't import on newer v15 releases. See [docs/setup.md](docs/setup.md).
 
 ## License
 

@@ -18,14 +18,15 @@ The following are deferred:
 - AI allocation
 - production hardening
 
-**ERPNext stock posting:** material rows link to Items with quantity and unit, but no Stock Entry is posted yet.
+**ERPNext stock posting** is implemented as an optional, manual action (Operations Manager, one Material Issue per submitted report). Returns and reversals of a posted entry are done in ERPNext directly.
 
 Company or team scoping for Operations Managers relies on standard Frappe User Permissions. The prototype uses a single demo company.
 
 4. **OneFM suspension and DSOT workflows aren't installed** on a fresh site (see [setup.md](setup.md)). Only the `workflow_state` column was added so OneFM's controller runs.
 5. **Frappe is pinned to v15.117.0** because current OneFM doesn't import on newer Frappe v15 releases. Security fixes released after that version aren't included.
 
+6. **OneFM breaks ERPNext's zero-stock valuation path** (`TypeError` from its `get_valuation_rate_` replacement). Stock posting checks availability first so users see a clear message. Other ERPNext stock flows on this stack may hit the same error.
+
 ## Not yet verified
 
-- The concurrency guarantee (competing allocations can't both succeed) is designed with row locks and locking reads. The automated tests check it sequentially. A two-connection test is still to be written.
-- HTTP-level REST calls and OneFM's Desk roster page haven't been tested. See [test-results.md](test-results.md).
+- OneFM's Desk roster page and mobile roster APIs, which write with direct SQL. See [test-results.md](test-results.md).

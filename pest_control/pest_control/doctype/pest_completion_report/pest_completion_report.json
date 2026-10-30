@@ -19,6 +19,11 @@
   "follow_up_notes",
   "section_materials",
   "materials_used",
+  "section_stock",
+  "source_warehouse",
+  "column_break_stock",
+  "stock_entry",
+  "stock_posting_status",
   "amended_from"
  ],
  "fields": [
@@ -96,6 +101,42 @@
    "options": "Pest Material Item"
   },
   {
+   "fieldname": "section_stock",
+   "fieldtype": "Section Break",
+   "label": "Stock Posting (optional)",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "Source Warehouse",
+   "options": "Warehouse",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "column_break_stock",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stock_entry",
+   "fieldtype": "Link",
+   "label": "Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1,
+   "no_copy": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "stock_posting_status",
+   "fieldtype": "Select",
+   "label": "Stock Posting Status",
+   "options": "Not Posted\nPosted",
+   "default": "Not Posted",
+   "read_only": 1,
+   "no_copy": 1,
+   "allow_on_submit": 1
+  },
+  {
    "fieldname": "amended_from",
    "fieldtype": "Link",
    "label": "Amended From",
@@ -110,7 +151,7 @@
  "is_submittable": 1,
  "istable": 0,
  "links": [],
- "modified": "2026-10-30 12:00:00.000000",
+ "modified": "2026-10-31 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "Pest Control",
  "name": "Pest Completion Report",

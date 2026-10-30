@@ -250,7 +250,8 @@ class PestControlAcceptance(FrappeTestCase):
 		# retrying the same request does not duplicate anything
 		again = allocation.reschedule_visit(visit.name, f"{day9} 10:00:00", f"{day9} 13:00:00", "Customer request")
 		self.assertFalse(again["changed"])
-		self.assertEqual(frappe.db.count("Employee Schedule", {"employee": self.tech_a, "reference_doctype": "Pest Visit Assignment"}), 1)
+		self.assertEqual(frappe.db.count("Employee Schedule", {"reference_docname": assignment}), 1)
+		self.assertEqual(schedule_of(assignment), new_schedule.name)
 
 		# a failing reschedule keeps the original valid schedule
 		blocker = self.new_visit(10)
