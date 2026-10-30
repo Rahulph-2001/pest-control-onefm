@@ -29,6 +29,16 @@ class PestControlAcceptance(FrappeTestCase):
 		cls.tech_b = fx.verified_worker("Bilal", user_email=cls.users.field2)
 		cls.tech_c = fx.verified_worker("Chitra")
 		cls.sup = fx.verified_worker("Sanjay", roles=("Supervisor",), qualified=True)
+		# OneFM's Employee.on_update commits, so every employee is created here,
+		# never inside a test (which would break the per-test rollback).
+		cls.nobody = fx.employee("Nobody")
+		cls.status_workers = {s: fx.verified_worker(f"Status{s}") for s in ("Pending", "Rejected", "Revoked")}
+		cls.inactive = fx.verified_worker("Inactive")
+		cls.unqualified = fx.verified_worker("Unqualified", qualified=False)
+		cls.expiring = fx.verified_worker("Expiring", qual_valid_days=2)
+		cls.no_shift = fx.verified_worker("NoShift")
+		cls.on_leave = fx.verified_worker("OnLeave")
+		cls.hr_self = fx.verified_worker("HrSelf", user_email=cls.users.hr, create_user_permission=0)
 		frappe.db.commit()
 
 	def setUp(self):
@@ -121,11 +131,10 @@ class PestControlAcceptance(FrappeTestCase):
 			frappe.set_user("Administrator")
 
 		# no verification record at all
-		rejects(fx.employee("Nobody"))
+		rejects(self.nobody)
 
 		# pending / rejected / revoked verification
-		for status in ("Pending", "Rejected", "Revoked"):
-			emp = fx.verified_worker(f"Status{status}")
+		for status, emp in self.status_workers.items():
 			doc = frappe.get_doc("Pest Employee Verification", {"employee": emp})
 			fx._force_status(doc, status)
 			rejects(emp)
@@ -134,22 +143,19 @@ class PestControlAcceptance(FrappeTestCase):
 		rejects(self.tech_c, "Supervisor")
 
 		# inactive employment
-		inactive = fx.verified_worker("Inactive")
-		frappe.db.set_value("Employee", inactive, "status", "Inactive")
-		rejects(inactive)
+		frappe.db.set_value("Employee", self.inactive, "status", "Inactive")
+		rejects(self.inactive)
 
-		# missing and expired qualification
-		rejects(fx.verified_worker("Unqualified", qualified=False))
-		expired = fx.verified_worker("Expiring", qual_valid_days=2)  # expires before visit day 4
-		rejects(expired)
+		# missing and expired qualification (expires before visit day 4)
+		rejects(self.unqualified)
+		rejects(self.expiring)
 
 		# no working period
-		no_shift = fx.verified_worker("NoShift")
-		frappe.db.set_value("Shift Assignment", {"employee": no_shift}, "status", "Inactive")
-		rejects(no_shift)
+		frappe.db.set_value("Shift Assignment", {"employee": self.no_shift}, "status", "Inactive")
+		rejects(self.no_shift)
 
 		# approved leave
-		on_leave = fx.verified_worker("OnLeave")
+		on_leave = self.on_leave
 		frappe.get_doc(
 			{
 				"doctype": "Leave Application",
@@ -280,7 +286,7 @@ class PestControlAcceptance(FrappeTestCase):
 
 		# replacing with an ineligible worker changes nothing
 		with self.assertRaises(frappe.ValidationError):
-			allocation.replace_assignment(new, fx.employee("Nobody"), "test")
+			allocation.replace_assignment(new, self.nobody, "test")
 		self.assertEqual(frappe.db.get_value("Pest Visit Assignment", new, "status"), "Active")
 		self.assertTrue(frappe.db.exists("Employee Schedule", schedule_of(new)))
 
@@ -355,8 +361,7 @@ class PestControlAcceptance(FrappeTestCase):
 
 		# self-approval: the HR verifier's own employee record
 		frappe.set_user("Administrator")
-		own = fx.verified_worker("HrSelf", user_email=self.users.hr)
-		own_doc = frappe.get_doc("Pest Employee Verification", {"employee": own})
+		own_doc = frappe.get_doc("Pest Employee Verification", {"employee": self.hr_self})
 		fx._force_status(own_doc, "Pending")
 		frappe.set_user(self.users.hr)
 		with self.assertRaises(frappe.PermissionError):

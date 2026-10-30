@@ -25,8 +25,41 @@ def ensure(doctype, filters, values=None, **insert_kwargs):
 	if name:
 		return frappe.get_doc(doctype, name)
 	doc = frappe.get_doc({"doctype": doctype, **filters, **(values or {})})
+	fill_mandatory(doc)
 	doc.insert(ignore_permissions=True, **insert_kwargs)
 	return doc
+
+
+def fill_mandatory(doc, depth=0):
+	"""OneFM adds many mandatory custom fields to standard DocTypes (Arabic names,
+	civil IDs, ...). Fill any still-empty required field with fictional data,
+	creating a placeholder record when a required link has nothing to point to."""
+	for df in doc.meta.get("fields", {"reqd": 1}):
+		if doc.get(df.fieldname) not in (None, ""):
+			continue
+		if df.fieldtype in ("Data", "Small Text", "Text", "Long Text", "Text Editor"):
+			value = f"{PREFIX} {df.label or df.fieldname}"
+			if df.options == "Email":
+				value = f"{frappe.scrub(df.fieldname)}{PREFIX.lower()}@example.com"
+			elif df.options == "Phone":
+				value = "+919000000000"
+			doc.set(df.fieldname, value[: df.length or 140])
+		elif df.fieldtype in ("Int", "Float", "Currency", "Percent"):
+			doc.set(df.fieldname, 1)
+		elif df.fieldtype == "Date":
+			doc.set(df.fieldname, nowdate())
+		elif df.fieldtype == "Select" and df.options:
+			options = [o for o in df.options.split("\n") if o]
+			doc.set(df.fieldname, options[0] if options else None)
+		elif df.fieldtype == "Link" and df.options:
+			filters = {"is_group": 0} if frappe.get_meta(df.options).has_field("is_group") else {}
+			value = frappe.db.get_value(df.options, filters, "name")
+			if not value and depth < 2 and df.options != doc.doctype:
+				placeholder = frappe.get_doc({"doctype": df.options})
+				fill_mandatory(placeholder, depth + 1)
+				placeholder.insert(ignore_permissions=True, set_name=f"{PREFIX} {df.options}")
+				value = placeholder.name
+			doc.set(df.fieldname, value)
 
 
 def user(email, roles):
@@ -42,9 +75,13 @@ def user(email, roles):
 def base_records():
 	"""Customer, item, shift type, OneFM project/site/shift/roles."""
 	comp = company()
-	ensure("Customer", {"customer_name": f"{PREFIX} Green Valley Apartments"}, {"customer_type": "Company"})
-	customer = frappe.db.get_value("Customer", {"customer_name": f"{PREFIX} Green Valley Apartments"})
-	other_customer = ensure("Customer", {"customer_name": f"{PREFIX} Other Customer"}, {"customer_type": "Company"}).name
+	customer_defaults = {
+		"customer_type": "Company",
+		"customer_group": frappe.db.get_value("Customer Group", {"is_group": 0}),
+		"territory": frappe.db.get_value("Territory", {"is_group": 0}),
+	}
+	customer = ensure("Customer", {"customer_name": f"{PREFIX} Green Valley Apartments"}, customer_defaults).name
+	other_customer = ensure("Customer", {"customer_name": f"{PREFIX} Other Customer"}, customer_defaults).name
 
 	ensure("UOM", {"uom_name": "Litre"})
 	item = ensure(
@@ -61,11 +98,25 @@ def base_records():
 	ensure("Shift Type", {"name": SHIFT_TYPE}, {"start_time": "07:00:00", "end_time": "19:00:00"}, set_name=SHIFT_TYPE)
 	ensure("Pest Qualification Type", {"qualification_name": QUALIFICATION}, {"expiry_required": 1})
 
-	project = ensure("Project", {"project_name": f"{PREFIX} Pest Control Contracts"}, {"company": comp}).name
+	project = ensure(
+		"Project",
+		{"project_name": f"{PREFIX} Pest Control Contracts"},
+		{"company": comp, "status": "Open", "is_active": "Yes"},
+	).name
+	contact = ensure("Contact", {"first_name": f"{PREFIX} Site Manager"}).name
+	location = ensure(
+		"Location", {"location_name": f"{PREFIX} Green Valley"}, {"latitude": 12.97, "longitude": 77.59}
+	).name
 	site = ensure(
 		"Operations Site",
 		{"site_name": f"{PREFIX} Green Valley Block A"},
-		{"project": project, "status": "Active", "pest_customer": customer},
+		{
+			"project": project,
+			"status": "Active",
+			"pest_customer": customer,
+			"site_location": location,
+			"poc": [{"poc": contact, "designation": "Facility Manager"}],
+		},
 	).name
 	service_type = ensure("Service Type", {"service_type": f"{PREFIX} Pest Control"}).name
 	shift = ensure(
@@ -92,7 +143,11 @@ def base_records():
 	)
 
 
-def employee(first_name, user_email=None, status="Active"):
+def employee(first_name, user_email=None, create_user_permission=1):
+	"""Note: OneFM's Employee.on_update commits the transaction (push
+	notification), so tests must create employees in setUpClass, not in a test.
+	Frappe HR restricts a linked user to their own Employee unless
+	create_user_permission is off; HR staff accounts need it off."""
 	name = frappe.db.get_value("Employee", {"first_name": first_name, "last_name": PREFIX})
 	if not name:
 		doc = frappe.get_doc(
@@ -106,12 +161,12 @@ def employee(first_name, user_email=None, status="Active"):
 				"company": company(),
 				"status": "Active",
 				"user_id": user_email,
+				"create_user_permission": create_user_permission,
 			}
 		)
+		fill_mandatory(doc)
 		doc.insert(ignore_permissions=True)
 		name = doc.name
-	if status != "Active":
-		frappe.db.set_value("Employee", name, "status", status)
 	return name
 
 
@@ -127,10 +182,13 @@ def private_file(label):
 	return doc.file_url
 
 
-def verified_worker(first_name, roles=("Technician",), user_email=None, qualified=True, qual_valid_days=365):
+def verified_worker(
+	first_name, roles=("Technician",), user_email=None, qualified=True, qual_valid_days=365,
+	create_user_permission=1,
+):
 	"""An employee with a Verified HR record, an optional verified qualification
 	and an open-ended Shift Assignment (working period)."""
-	emp = employee(first_name, user_email)
+	emp = employee(first_name, user_email, create_user_permission)
 	verification = frappe.db.get_value("Pest Employee Verification", {"employee": emp})
 	if not verification:
 		doc = frappe.get_doc(

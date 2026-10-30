@@ -20,6 +20,9 @@ if [ ! -x "$CLI_DIR/bin/bench" ]; then
 	"$CLI_DIR/bin/pip" install -q frappe-bench
 fi
 export PATH="$CLI_DIR/bin:$PATH"
+
+# The image's MariaDB 11 client requires TLS by default; the local dev server has none.
+printf '[client]\nskip-ssl\n' > "$HOME/.my.cnf"
 source "$HOME/.nvm/nvm.sh"
 nvm use 22 >/dev/null
 
@@ -47,7 +50,7 @@ done < "$APPS_FILE"
 if [ ! -e apps/pest_control ]; then
 	ln -s /workspace/pest_control apps/pest_control
 	./env/bin/pip install -e apps/pest_control
-	grep -qx pest_control sites/apps.txt || echo pest_control >> sites/apps.txt
+	grep -qx pest_control sites/apps.txt || { sed -i -e "$a\\" sites/apps.txt; echo pest_control >> sites/apps.txt; }
 fi
 
 if [ ! -d "sites/$SITE" ]; then
@@ -60,11 +63,15 @@ while read -r app url branch; do
 done < "$APPS_FILE"
 bench --site "$SITE" list-apps | grep -q "^pest_control" || bench --site "$SITE" install-app pest_control
 
+# OneFM's own installer skips whole DocTypes on one field conflict; re-apply per field.
+bench --site "$SITE" execute pest_control.setup.onefm_repair.repair_custom_fields
+
 bench --site "$SITE" set-config allow_tests true
 bench --site "$SITE" migrate
 bench use "$SITE"
 
 # Record the exact commits used.
+git config --global --add safe.directory /workspace/pest_control
 for d in apps/*; do
 	[ -d "$d/.git" ] || [ -L "$d" ] || continue
 	echo "$(basename "$d") $(git -C "$d" rev-parse HEAD) $(git -C "$d" rev-parse --abbrev-ref HEAD)"

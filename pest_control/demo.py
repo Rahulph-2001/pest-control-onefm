@@ -5,7 +5,7 @@ bench --site pest.localhost execute pest_control.demo.run_journey
 """
 
 import frappe
-from frappe.utils import add_days, now_datetime, nowdate
+from frappe.utils import add_days, nowdate
 
 from pest_control import allocation
 from pest_control.tests import fixtures as fx
@@ -34,6 +34,14 @@ def _set_password(user, password):
 	update_password(user, password)
 
 
+def _free_past_day(employees, max_days=25):
+	for back in range(1, max_days):
+		day = add_days(nowdate(), -back)
+		if not frappe.db.exists("Employee Schedule", {"employee": ("in", employees), "date": day}):
+			return day
+	frappe.throw("No free day in the last few weeks for the demo crew.")
+
+
 def run_journey(day_offset: int = 1):
 	"""Enquiry -> request -> visit -> OneFM allocation -> start -> report."""
 	data = setup_demo()
@@ -51,9 +59,11 @@ def run_journey(day_offset: int = 1):
 	except frappe.ValidationError:
 		frappe.clear_messages()  # expected: unverified worker refused
 
-	# move the visit to today so it can be started and reported in the demo
-	today = nowdate()
-	allocation.reschedule_visit(visit.name, f"{today} 07:00:00", f"{today} 08:00:00", "Demo: bring forward")
+	# bring the visit into the past so it can be started and reported in one run;
+	# OneFM allows one Basic schedule per employee per day, so use a free day
+	crew = [workers["Arun (verified technician)"], workers["Sanjay (verified supervisor)"]]
+	day = _free_past_day(crew)
+	allocation.reschedule_visit(visit.name, f"{day} 09:00:00", f"{day} 11:00:00", "Demo: bring forward")
 	allocation.start_visit(visit.name)
 
 	frappe.set_user(users.field)
@@ -61,8 +71,8 @@ def run_journey(day_offset: int = 1):
 		{
 			"doctype": "Pest Completion Report",
 			"visit": visit.name,
-			"actual_start": f"{today} 07:00:00",
-			"actual_end": min(now_datetime(), frappe.utils.get_datetime(f"{today} 08:00:00")),
+			"actual_start": f"{day} 09:05:00",
+			"actual_end": f"{day} 10:50:00",
 			"work_performed": "Inspected kitchens; applied gel bait at 12 points.",
 			"follow_up_notes": "Re-inspect in 14 days.",
 			"materials_used": [{"item_code": base.item, "qty": 2, "uom": "Nos"}],

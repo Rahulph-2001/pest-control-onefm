@@ -1,0 +1,14 @@
+crm 36bd8859f2a6345a620477bc708d0546e8c3f08a v1.90.0
+erpnext 9f33fd5d32ae8a75156b2e7c2f8be02503fcc248 v15.124.3
+frappe 6c876ea06963ec90ffbc0673e65b48328680fdd8 v15.117.0
+helpdesk 78722c2b364309569d4bbc0ef875e34c3654b709 v1.30.2
+hrms 9f5d9e4aea4544481dec9c7a25ff3193304540d3 v15.64.7
+lending 7ec2bba1471d98e2e0bb08adbce39ae84c78ded9 version-15
+one_fm e15a521871b8b4e62f0bde7b374bb7b8fc89d52f version-15
+one_fm_password_management 38d67fe2fb6ad925cfa7bdc75215921bdbff2251 version-15
+payments 2bc0cdeb5e79cfb8639318c95206b6609264f8a7 version-15
+pest_control 3505593f3455b2f12df02efa6c1e4a01b76a6880 main
+telephony 9447577500a25d242088398157b72c654fa34b20 develop
+twilio_integration cb474c54d794c3a58a8c5287d387cf3d41e5ed0a master
+wiki bd768c89c474c0472e4b89a7078933cbd25d7563 version-15
+python 3.12.16, node v22.23.4, mariadb 10.6 (server), redis 8

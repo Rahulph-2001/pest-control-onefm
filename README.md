@@ -2,7 +2,7 @@
 
 Pest Control Management prototype on **OneFM**, Frappe, ERPNext, Frappe HR and CRM (v15): service visits, verified manpower allocation and audit controls.
 
-> **Status: in progress.** The extension app is written but has not yet been run against an installed OneFM stack. Test results will be recorded in `docs/` once the stack is up.
+> **Status: working prototype.** It runs on an installed OneFM stack (Frappe v15.117.0, ERPNext, Frappe HR, CRM, OneFM `version-15`), and **all 11 mandatory acceptance cases pass**. The enquiry → visit → OneFM allocation → completion report journey runs end to end. See [docs/test-results.md](docs/test-results.md). Stock posting is not implemented yet.
 
 ## What it does
 
@@ -46,7 +46,16 @@ docker compose -f docker/docker-compose.yml up -d
 docker compose -f docker/docker-compose.yml exec frappe bash /workspace/pest_control/docker/setup-bench.sh
 ```
 
-App versions and install order are listed in `docker/apps.txt`. The exact commits are written to `docs/stack-lock.txt` after setup.
+App versions and install order are listed in `docker/apps.txt`. The exact commits are in [docs/stack-lock.txt](docs/stack-lock.txt).
+
+See [docs/setup.md](docs/setup.md) for the full setup steps, demo users, and the **OneFM install problems found on a fresh site and how each was handled**.
+
+## Docs
+
+- [docs/design.md](docs/design.md): reuse mapping, allocation rules, verification workflow, roles, audit
+- [docs/test-results.md](docs/test-results.md): acceptance results and what isn't covered
+- [docs/setup.md](docs/setup.md): setup, demo data, OneFM install findings
+- [docs/limitations.md](docs/limitations.md): known gaps and backlog
 
 ## Known gaps
 

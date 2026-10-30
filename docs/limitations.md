@@ -22,6 +22,10 @@ The following are deferred:
 
 Company or team scoping for Operations Managers relies on standard Frappe User Permissions. The prototype uses a single demo company.
 
+4. **OneFM suspension and DSOT workflows aren't installed** on a fresh site (see [setup.md](setup.md)). Only the `workflow_state` column was added so OneFM's controller runs.
+5. **Frappe is pinned to v15.117.0** because current OneFM doesn't import on newer Frappe v15 releases. Security fixes released after that version aren't included.
+
 ## Not yet verified
 
-The concurrency guarantee (competing allocations can't both succeed) is designed with row locks and locking reads. The automated tests check it sequentially. A two-connection test is still to be written.
+- The concurrency guarantee (competing allocations can't both succeed) is designed with row locks and locking reads. The automated tests check it sequentially. A two-connection test is still to be written.
+- HTTP-level REST calls and OneFM's Desk roster page haven't been tested. See [test-results.md](test-results.md).

@@ -7,5 +7,6 @@ helpdesk https://github.com/frappe/helpdesk v1.30.2
 crm https://github.com/frappe/crm main
 wiki https://github.com/ONE-F-M/wiki version-15
 twilio_integration https://github.com/frappe/twilio-integration master
+lending https://github.com/frappe/lending version-15
 one_fm_password_management https://github.com/ONE-F-M/password_management version-15
 one_fm https://github.com/ONE-F-M/one_fm version-15
